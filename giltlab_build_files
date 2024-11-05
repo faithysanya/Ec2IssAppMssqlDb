@@ -1,0 +1,80 @@
+# Docker build files
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker --version
+    - docker build -t hw-web-app .
+
+deploy:
+  stage: deploy
+  script:
+    - docker run -d --name mypycont1 -p 80:8080 hw-web-app
+
+# Docker build files
+
+stages:
+    - build_stage
+    - deploy_stage
+    
+build:
+    stage: build_stage
+    script:
+      - docker --version
+      - docker build -t pyapp .
+    tags:
+      - ""
+deploy:
+    stage: deploy_stage  
+    script:       
+      - docker run -d --name pycontainer -p 80:8080 pyapp
+    tags:
+      - ""
+
+# Docker build files
+
+stages:
+  - build_stage
+  - deploy_stage
+build:
+  stage: build_stage
+  image: node
+  script:
+#    - apt update -y
+#    - apt install npm -y
+    - npm install
+  artifacts:
+    paths:
+      - node_modules
+      - package-lock.json
+deploy:
+  stage: deploy_stage
+  image: node
+  script:
+#   - apt update -y
+#    - apt install nodejs -y
+    - node app.js > /dev/null 2>&1 &
+
+
+
+# Dockerfile
+
+FROM python:3.8-slim
+WORKDIR /app
+COPY . /app
+RUN pip install --trusted-host pypi.python.org Flask
+ENV NAME Fatai
+CMD ["python","app.py"] 
+
+# Dockerfile
+
+FROM python:3.8-slim
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 80
+CMD ["python3", "server.py"]
