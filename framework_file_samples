@@ -1,0 +1,72 @@
+#   app.py
+create_build:
+  image: python:3.8-alpine
+  script:
+    - python3 server.py  > /dev/null 2>&1 &
+
+ #   test.py
+ def func(x):
+    return x + 1
+
+def test_answer():
+    assert func(3) == 5
+
+#   python dockerfile
+
+FROM python:3.8-slim
+WORKDIR /app
+RUN groupadd -r mygroup && useradd -r -g mygroup myuser
+COPY . /app
+USER myuser
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 80
+CMD 
+
+#  yml file python
+image: python:3.8-slim
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - pip install --no-cache-dir -r requirements.txt
+
+build:
+  stage: build
+  script:
+    - echo "Build stage"
+
+test:
+  stage: test
+  script:
+    - echo "Test stage"
+
+deploy:
+  stage: deploy
+  script:
+    - python
+
+
+ #   nodejs .yml file
+
+FROM node:14
+WORKDIR /app
+COPY . /app
+RUN npm install
+EXPOSE 80
+ENV NODE_ENV production
+CMD ["node", "app.js"]
+
+
+# dockerfile nodejs
+
+FROM node:14
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 80
+CMD ["node", "server.js"]
